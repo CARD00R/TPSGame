@@ -12,6 +12,34 @@ class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 
+
+// Character Enum States
+UENUM(BlueprintType)
+enum class EParentStance : uint8
+{
+	Eps_Standing UMETA(DisplayName = "Standing"),
+	Eps_Crouching UMETA(DisplayName = "Crouching"),
+	Eps_InAir UMETA(DisplayName = "InAir"),
+	//Eps_Dead UMETA(DisplayName = "Dead"),
+	Eps_Max UMETA(DisplayName = "DefaultMax")
+};
+
+UENUM(BlueprintType)
+enum class EStanceStatus : uint8
+{
+	Ess_StandIdling UMETA(DisplayName = "StandIdling"),
+	Ess_StandJogging UMETA(DisplayName = "StandJogging"),
+	Ess_StandSprinting UMETA(DisplayName = "StandSprinting"),
+	Ess_Jumping UMETA(DisplayName = "Jumping"),
+	Ess_CrouchIdling UMETA(DisplayName = "CrouchIdling"),
+	Ess_CrouchWalking UMETA(DisplayName = "CrouchWalking"),
+	Ess_CrouchSprinting UMETA(DisplayName = "CrouchSprinting"),
+	Ess_InAirFalling UMETA(DisplayName = "InAirFalling"),
+	Ess_Landing UMETA(DisplayName = "Landing"),
+	Ess_Max UMETA(DisplayName = "DefaultMax")
+};
+
+
 UCLASS()
 class TPSGAME_API ATPSCharacter : public ACharacter
 {
@@ -20,6 +48,14 @@ class TPSGAME_API ATPSCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ATPSCharacter();
+
+	// Character State Enums
+	// Parent Stance
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character States")
+	EParentStance ParentStance;
+	UFUNCTION(BlueprintCallable, Category = "Character States")
+	void SetParentStanceStatus(EParentStance aStatus);
+	EParentStance GetParentStanceStatus();
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,11 +78,14 @@ protected:
 	UInputAction* LookAction;
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* JumpAction;
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* CrouchAction;
 
 	// Input functions
 	void Move(const FInputActionValue& aValue);
 	void Look(const FInputActionValue& aValue);
 	void Jump();
+	void Crouch();
 
 public:	
 	// Called every frame

@@ -44,6 +44,8 @@ void ATPSCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+
+#pragma region CHARACTER INPUT
 // Called to bind functionality to input
 void ATPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -54,10 +56,11 @@ void ATPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Jump);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Crouch);
 	}
 }
 
-// Character Input: moving forward/backward and left/right
+// moving forward/backward and left/right
 void ATPSCharacter::Move(const FInputActionValue& aValue)
 {
 	const FVector2d MovementVector = aValue.Get<FVector2D>();
@@ -68,7 +71,7 @@ void ATPSCharacter::Move(const FInputActionValue& aValue)
 	AddMovementInput(Right, MovementVector.X);
 }
 
-// Character Input: looking up/down and left/right
+// looking up/down and left/right
 void ATPSCharacter::Look(const FInputActionValue& aValue)
 {
 	const FVector2d LookAxisVector = aValue.Get<FVector2D>();
@@ -79,7 +82,26 @@ void ATPSCharacter::Look(const FInputActionValue& aValue)
 
 void ATPSCharacter::Jump()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hello"));
+	// Complete Jump Checks here
+	SetParentStanceStatus(EParentStance::Eps_Standing);
+	UE_LOG(LogTemp, Warning, TEXT("Jumping"));
 }
 
+void ATPSCharacter::Crouch()
+{
+	// Complete Crouch Checks here
+	SetParentStanceStatus(EParentStance::Eps_Crouching);
+	UE_LOG(LogTemp, Warning, TEXT("Crouching"));
+}
+#pragma endregion 
 
+// Setter
+void ATPSCharacter::SetParentStanceStatus(EParentStance aStatus)
+{
+	ParentStance = aStatus;
+}
+//Getter
+EParentStance ATPSCharacter::GetParentStanceStatus()
+{
+	return ParentStance;
+}
