@@ -11,7 +11,7 @@ class UInputMappingContext;
 class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
-
+class UTPSAnimInst;
 
 // Character Enum States
 UENUM(BlueprintType)
@@ -24,21 +24,32 @@ enum class EParentStance : uint8
 	Eps_Max UMETA(DisplayName = "DefaultMax")
 };
 
+/*
+ARCHIVED STANDING & CROUCHING STANCES
 UENUM(BlueprintType)
-enum class EStanceStatus : uint8
+enum class EStandingStance : uint8
 {
-	Ess_StandIdling UMETA(DisplayName = "StandIdling"),
-	Ess_StandJogging UMETA(DisplayName = "StandJogging"),
-	Ess_StandSprinting UMETA(DisplayName = "StandSprinting"),
-	Ess_Jumping UMETA(DisplayName = "Jumping"),
-	Ess_CrouchIdling UMETA(DisplayName = "CrouchIdling"),
-	Ess_CrouchWalking UMETA(DisplayName = "CrouchWalking"),
-	Ess_CrouchSprinting UMETA(DisplayName = "CrouchSprinting"),
-	Ess_InAirFalling UMETA(DisplayName = "InAirFalling"),
-	Ess_Landing UMETA(DisplayName = "Landing"),
+	Ess_StandingIdle UMETA(DisplayName = "StandingIdle"),
+	Ess_StandingJog UMETA(DisplayName = "StandingJog"),
+	Ess_StandingSprint UMETA(DisplayName = "StandingSprint"),
 	Ess_Max UMETA(DisplayName = "DefaultMax")
 };
+UENUM(BlueprintType)
+enum class ECrouchingStance : uint8
+{
+	Ecs_CrouchingIdle UMETA(DisplayName = "CrouchingIdle"),
+	Ecs_CrouchingWalk UMETA(DisplayName = "CrouchingWalk"),
+	Ecs_Max UMETA(DisplayName = "DefaultMax")
+};
 
+UENUM(BlueprintType)
+enum class EAirStance : uint8
+{
+	Eas_Jumping UMETA(DisplayName = "Jumping"),
+	Eas_Falling UMETA(DisplayName = "Falling"),
+	Eas_Landing UMETA(DisplayName = "Landing"),
+	Eas_Max UMETA(DisplayName = "DefaultMax")
+};*/
 
 UCLASS()
 class TPSGAME_API ATPSCharacter : public ACharacter
@@ -49,14 +60,13 @@ public:
 	// Sets default values for this character's properties
 	ATPSCharacter();
 
-	// Character State Enums
-	// Parent Stance
+	// Character Parent State
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character States")
 	EParentStance ParentStance;
 	UFUNCTION(BlueprintCallable, Category = "Character States")
-	void SetParentStanceStatus(EParentStance aStatus);
-	EParentStance GetParentStanceStatus();
-
+	void SetParentStance(EParentStance aStatus);
+	EParentStance GetParentStance();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -87,6 +97,10 @@ protected:
 	void Jump();
 	void Crouch();
 
+	// Animation
+	//UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	//UAnimInstance* TPSAnimInst;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -94,4 +108,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
 };

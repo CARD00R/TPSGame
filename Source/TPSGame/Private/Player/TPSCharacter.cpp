@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
 ATPSCharacter::ATPSCharacter()
@@ -15,6 +16,8 @@ ATPSCharacter::ATPSCharacter()
  	// Set this character to call Tick() every frame.  Can be turned off to improve performance
 	PrimaryActorTick.bCanEverTick = true;
 
+	
+	
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("Sprint Arm Component"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->bUsePawnControlRotation = true;
@@ -44,7 +47,6 @@ void ATPSCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-
 #pragma region CHARACTER INPUT
 // Called to bind functionality to input
 void ATPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -57,6 +59,10 @@ void ATPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Jump);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Crouch);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Enhanced Input Component cast failed"));
 	}
 }
 
@@ -83,25 +89,30 @@ void ATPSCharacter::Look(const FInputActionValue& aValue)
 void ATPSCharacter::Jump()
 {
 	// Complete Jump Checks here
-	SetParentStanceStatus(EParentStance::Eps_Standing);
+	SetParentStance(EParentStance::Eps_Standing);
 	UE_LOG(LogTemp, Warning, TEXT("Jumping"));
 }
 
 void ATPSCharacter::Crouch()
 {
 	// Complete Crouch Checks here
-	SetParentStanceStatus(EParentStance::Eps_Crouching);
+	SetParentStance(EParentStance::Eps_Crouching);
 	UE_LOG(LogTemp, Warning, TEXT("Crouching"));
 }
 #pragma endregion 
 
-// Setter
-void ATPSCharacter::SetParentStanceStatus(EParentStance aStatus)
+
+// Set Parent Status
+void ATPSCharacter::SetParentStance(EParentStance aStatus)
 {
 	ParentStance = aStatus;
 }
-//Getter
-EParentStance ATPSCharacter::GetParentStanceStatus()
+// Get parent Status
+EParentStance ATPSCharacter::GetParentStance()
 {
 	return ParentStance;
 }
+
+
+
+
