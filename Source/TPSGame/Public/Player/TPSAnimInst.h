@@ -21,10 +21,11 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaTime) override; 
 	// Movement Speeds
 	UPROPERTY(BlueprintReadOnly, Category = "Physics")
-	float CharacterSpeed = 0;
+	float CharacterSpeed = 0.0f;
 	UPROPERTY(BlueprintReadOnly, Category = "Physics")
-	float CharacterDirection = 0;
-
+	float CharacterDirection = 0.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Physics")
+	float BackwardsCheck = 0.0f;
 protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")

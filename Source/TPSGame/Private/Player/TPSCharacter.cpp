@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ATPSCharacter::ATPSCharacter()
@@ -16,8 +17,6 @@ ATPSCharacter::ATPSCharacter()
  	// Set this character to call Tick() every frame.  Can be turned off to improve performance
 	PrimaryActorTick.bCanEverTick = true;
 
-	
-	
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("Sprint Arm Component"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->bUsePawnControlRotation = true;
@@ -57,8 +56,8 @@ void ATPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Look);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Jump);
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ATPSCharacter::Crouch);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ATPSCharacter::TPSJump);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ATPSCharacter::TPSCrouch);
 	}
 	else
 	{
@@ -86,18 +85,29 @@ void ATPSCharacter::Look(const FInputActionValue& aValue)
 	AddControllerYawInput(LookAxisVector.X);
 }
 
-void ATPSCharacter::Jump()
+void ATPSCharacter::TPSJump()
 {
 	// Complete Jump Checks here
-	SetParentStance(EParentStance::Eps_Standing);
-	UE_LOG(LogTemp, Warning, TEXT("Jumping"));
 }
 
-void ATPSCharacter::Crouch()
+void ATPSCharacter::TPSCrouch()
 {
 	// Complete Crouch Checks here
-	SetParentStance(EParentStance::Eps_Crouching);
-	UE_LOG(LogTemp, Warning, TEXT("Crouching"));
+	if(ParentStance == EParentStance::Eps_Crouching)
+		Stand(); 
+	else
+	{
+		SetMaxWalkSpeed(CrouchWalkSpeed);
+		SetParentStance(EParentStance::Eps_Crouching);
+		UE_LOG(LogTemp, Warning, TEXT("Crouching"));
+	}
+}
+
+void ATPSCharacter::Stand()
+{
+	SetMaxWalkSpeed(StandJogSpeed);
+	SetParentStance(EParentStance::Eps_Standing);
+	UE_LOG(LogTemp, Warning, TEXT("Standing"));
 }
 #pragma endregion 
 
@@ -111,6 +121,11 @@ void ATPSCharacter::SetParentStance(EParentStance aStatus)
 EParentStance ATPSCharacter::GetParentStance()
 {
 	return ParentStance;
+}
+
+void ATPSCharacter::SetMaxWalkSpeed(const float aSpeed)
+{
+	this->GetCharacterMovement()->MaxWalkSpeed = aSpeed;
 }
 
 

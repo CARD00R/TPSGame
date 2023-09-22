@@ -12,6 +12,7 @@ class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 class UTPSAnimInst;
+class UCharacterMovementComponent;
 
 // Character Enum States
 UENUM(BlueprintType)
@@ -75,12 +76,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	UCameraComponent* CameraComp; 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-	USpringArmComponent* SpringArmComp; 
+	USpringArmComponent* SpringArmComp;
+
+	// Character Movement
+	UCharacterMovementComponent* CharacterMovementComp;
+	void SetMaxWalkSpeed(const float aSpeed);
+	UPROPERTY(EditDefaultsOnly, Category = "Character Movement")
+	float StandJogSpeed = 500.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Character Movement")
+	float CrouchWalkSpeed = 300.0f;
 	
+	// Input
 	// Stores Action Mappings for binding
 	UPROPERTY(EditDefaultsOnly,Category = Input)
 	UInputMappingContext* TPSContext;
-
 	// Action Mappings (Key Inputs)
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* MoveAction; 
@@ -90,16 +99,12 @@ protected:
 	UInputAction* JumpAction;
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* CrouchAction;
-
 	// Input functions
 	void Move(const FInputActionValue& aValue);
 	void Look(const FInputActionValue& aValue);
-	void Jump();
-	void Crouch();
-
-	// Animation
-	//UPROPERTY(BlueprintReadOnly, Category = "Animation")
-	//UAnimInstance* TPSAnimInst;
+	void TPSJump();
+	void TPSCrouch();
+	void Stand();
 
 public:	
 	// Called every frame
